@@ -1,16 +1,116 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
+import { ChevronLeft, ChevronRight, ExternalLink, X } from "lucide-react"
 import Header from "@/components/header"
+import portfolioImage from "./portfolio.png"
+import verbaDashboardImage from "./verba-dashboard.png"
+import verbaGallery1 from "./verba-gallery1.png"
+import verbaGallery2 from "./verba-gallery2.png"
+import verbaGallery4 from "./verba-gallery4.png"
+import verbaGallery5 from "./verba-gallery5.png"
+import verbaGallery6 from "./verba-gallery6.png"
+import verbaGallery7 from "./verba-gallery7.png"
+import verbaGallery8 from "./verba-gallery8.png"
 
 type Section = "education" | "projects" | "future"
 type View = "home" | "experiences"
+type Project = {
+  title: string
+  description: string
+  modalDescription?: string
+  tech: string[]
+  image: string
+  gallery?: string[]
+  link?: string
+}
+
+const verbaGalleryImages = [
+  verbaDashboardImage.src,
+  verbaGallery1.src,
+  verbaGallery2.src,
+  verbaGallery4.src,
+  verbaGallery5.src,
+  verbaGallery6.src,
+  verbaGallery7.src,
+  verbaGallery8.src,
+]
+
+const educationContent = [
+  {
+    title: "VWO 4 (Pre-university education)",
+    institution: "Het Amsterdams Lyceum",
+    period: "Current",
+    description:
+      "Studying at one of Amsterdam's leading secondary schools while building products and learning software development",
+  },
+]
+
+const projectsContent: Project[] = [
+  {
+    title: "Verba",
+    description:
+      "AI character creation platform that lets users design and connect conversational AIs to Discord, Twitter/X, Bluesky, and soon WhatsApp. Handling everything from backend infrastructure to UI design and deployment.",
+    modalDescription:
+      "Verba is an AI character creation platform for designing conversational agents and connecting them to social and messaging platforms from one dashboard.",
+    tech: ["Node.js", "AI/LLM Integration", "Discord API", "Twitter API", "Docker", "And More.."],
+    image: verbaDashboardImage.src,
+    gallery: verbaGalleryImages,
+    link: "verba.ink",
+  },
+  {
+    title: "Portfolio Website",
+    description:
+      "Fully AI-assisted and customized portfolio website showcasing projects, skills, and personal growth as a young developer exploring AI and product design.",
+    modalDescription:
+      "A customized portfolio built to present projects, technical interests, and personal growth in one visual web experience.",
+    tech: ["React", "Next.js", "Tailwind CSS", "WebGL"],
+    image: portfolioImage.src,
+  },
+]
+
+const futureContent = [
+  {
+    title: "Build Innovative AI Systems",
+    description: "Creating AI systems that make technology more natural, accessible, and creative for everyone",
+    status: "In Progress",
+  },
+  {
+    title: "Grow Verba into a Global Platform",
+    description:
+      "Expanding Verba's reach and capabilities to become a leading AI character creation platform worldwide",
+    status: "Active",
+  },
+  {
+    title: "Found or Join AI-Focused Tech Company",
+    description:
+      "Leading projects that push the limits of what AI can do, focusing on machine learning, software architecture, and business development",
+    status: "Long-term Goal",
+  },
+]
+
+const homeProjects = projectsContent.map((project) => ({
+  title: project.title,
+  description:
+    project.title === "Verba"
+      ? "AI character creation platform with Discord, Twitter/X, and Bluesky integration"
+      : "Fully AI-assisted portfolio showcasing projects and skills",
+  tech: project.tech.slice(0, 3),
+  image: project.image,
+}))
+
+function getProjectImages(project: Project) {
+  return project.gallery?.length ? project.gallery : [project.image]
+}
 
 export default function Portfolio() {
   const [currentView, setCurrentView] = useState<View>("home")
   const [activeSection, setActiveSection] = useState<Section>("education")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showProjects, setShowProjects] = useState(false)
+  const [selectedProjectIndex, setSelectedProjectIndex] = useState<number | null>(null)
+  const [activeGalleryIndex, setActiveGalleryIndex] = useState(0)
+  const experiencesScrollRef = useRef<HTMLElement | null>(null)
 
   // Reset scroll position and disable/enable body scroll when switching views
   useEffect(() => {
@@ -28,72 +128,76 @@ export default function Portfolio() {
     }
   }, [currentView])
 
-  const educationContent = [
-    {
-      title: "VWO 4 (Pre-university education)",
-      institution: "Het Amsterdams Lyceum",
-      period: "Current",
-      description:
-        "Studying at one of Amsterdam's leading secondary schools while building products and learning software development",
-    },
-  ]
+  useEffect(() => {
+    if (currentView !== "experiences") {
+      return
+    }
 
-  const projectsContent = [
-    {
-      title: "Verba",
-      description:
-        "AI character creation platform that lets users design and connect conversational AIs to Discord, Twitter/X, Bluesky, and soon WhatsApp. Handling everything from backend infrastructure to UI design and deployment.",
-      tech: ["Node.js", "AI/LLM Integration", "Discord API", "Twitter API", "Docker", "And More.."],
-      image: "https://i.ibb.co/ycSJnGbK/Screenshot-2025-10-21-165110.png",
-      link: "verba.ink",
-    },
-    {
-      title: "Portfolio Website",
-      description:
-        "Fully AI-assisted and customized portfolio website showcasing projects, skills, and personal growth as a young developer exploring AI and product design.",
-      tech: ["React", "Next.js", "Tailwind CSS", "WebGL"],
-      image: "https://i.ibb.co/RpDS8Wbj/Screenshot-2025-10-21-164906.png",
-    },
-  ]
+    window.scrollTo(0, 0)
+    experiencesScrollRef.current?.scrollTo({ top: 0, left: 0 })
+  }, [activeSection, currentView])
 
-  const futureContent = [
-    {
-      title: "Build Innovative AI Systems",
-      description: "Creating AI systems that make technology more natural, accessible, and creative for everyone",
-      status: "In Progress",
-    },
-    {
-      title: "Grow Verba into a Global Platform",
-      description:
-        "Expanding Verba's reach and capabilities to become a leading AI character creation platform worldwide",
-      status: "Active",
-    },
-    {
-      title: "Found or Join AI-Focused Tech Company",
-      description:
-        "Leading projects that push the limits of what AI can do, focusing on machine learning, software architecture, and business development",
-      status: "Long-term Goal",
-    },
-  ]
+  const selectedProject = selectedProjectIndex === null ? null : projectsContent[selectedProjectIndex] ?? null
+  const selectedProjectImages = selectedProject ? getProjectImages(selectedProject) : []
+  const activeProjectImage = selectedProjectImages[activeGalleryIndex] ?? selectedProject?.image
 
-  const homeProjects = [
-    {
-      title: "Verba",
-      description: "AI character creation platform with Discord, Twitter/X, and Bluesky integration",
-      tech: ["Node.js", "AI/LLM", "Discord API"],
-      image: "https://i.ibb.co/ycSJnGbK/Screenshot-2025-10-21-165110.png",
-    },
-    {
-      title: "Portfolio Website",
-      description: "Fully AI-assisted portfolio showcasing projects and skills",
-      tech: ["React", "Next.js", "Tailwind"],
-      image: "https://i.ibb.co/RpDS8Wbj/Screenshot-2025-10-21-164906.png",
-    },
-  ]
+  useEffect(() => {
+    if (!selectedProject) {
+      return
+    }
+
+    const imageCount = selectedProjectImages.length
+    const previousBodyOverflow = document.body.style.overflow
+    const previousHtmlOverflow = document.documentElement.style.overflow
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedProjectIndex(null)
+        return
+      }
+
+      if (imageCount < 2) {
+        return
+      }
+
+      if (event.key === "ArrowRight") {
+        setActiveGalleryIndex((current) => (current + 1) % imageCount)
+      }
+
+      if (event.key === "ArrowLeft") {
+        setActiveGalleryIndex((current) => (current - 1 + imageCount) % imageCount)
+      }
+    }
+
+    document.body.style.overflow = "hidden"
+    document.documentElement.style.overflow = "hidden"
+    window.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow
+      document.documentElement.style.overflow = previousHtmlOverflow
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [selectedProject, selectedProjectImages.length])
+
+  const openProjectModal = (index: number) => {
+    setSelectedProjectIndex(index)
+    setActiveGalleryIndex(0)
+  }
+
+  const stepProjectImage = (direction: 1 | -1) => {
+    if (selectedProjectImages.length < 2) {
+      return
+    }
+
+    setActiveGalleryIndex(
+      (current) => (current + direction + selectedProjectImages.length) % selectedProjectImages.length,
+    )
+  }
 
   return (
     <>
-        <Header />
+      <Header />
 
       {/* Home View */}
       <main
@@ -201,7 +305,16 @@ export default function Portfolio() {
               {homeProjects.map((project, index) => (
                 <div
                   key={index}
-                  className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 transition-all duration-300 hover:bg-white/10 hover:border-white/20 cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openProjectModal(index)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      openProjectModal(index)
+                    }
+                  }}
+                  className="group relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 text-left transition-all duration-300 hover:bg-white/10 hover:border-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 cursor-pointer"
                   style={{
                     animationDelay: `${index * 100}ms`,
                     animation: showProjects ? "slideInUp 0.6s ease-out forwards" : "none",
@@ -237,7 +350,8 @@ export default function Portfolio() {
 
       {/* Experiences View */}
       <main
-        className={`absolute inset-0 z-20 flex items-center justify-center overflow-y-auto px-3 sm:px-4 md:px-8 py-8 sm:py-12 md:py-16 lg:py-24 pb-16 sm:pb-20 transition-all duration-700 ${
+        ref={experiencesScrollRef}
+        className={`absolute inset-0 z-20 flex items-start justify-center overflow-y-auto px-3 sm:px-4 md:px-8 pt-24 sm:pt-28 md:pt-[22vh] lg:pt-[clamp(10rem,26vh,17rem)] pb-16 sm:pb-20 lg:pb-24 transition-all duration-700 ${
           currentView === "experiences" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8 pointer-events-none"
         }`}
       >
@@ -358,7 +472,16 @@ export default function Portfolio() {
                   {projectsContent.map((project, index) => (
                     <div
                       key={index}
-                      className="group rounded-xl sm:rounded-2xl md:rounded-3xl bg-white/5 backdrop-blur-md border border-white/10 overflow-hidden transition-all duration-300 active:bg-white/10 active:border-white/20"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openProjectModal(index)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault()
+                          openProjectModal(index)
+                        }
+                      }}
+                      className="group rounded-xl sm:rounded-2xl md:rounded-3xl bg-white/5 backdrop-blur-md border border-white/10 overflow-hidden text-left transition-all duration-300 hover:bg-white/10 hover:border-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 active:bg-white/10 active:border-white/20 cursor-pointer"
                     >
                       <div className="aspect-video overflow-hidden">
                         <img
@@ -375,6 +498,8 @@ export default function Portfolio() {
                               href={`https://${project.link}`}
                               target="_blank"
                               rel="noopener noreferrer"
+                              onClick={(event) => event.stopPropagation()}
+                              onKeyDown={(event) => event.stopPropagation()}
                               className="text-[10px] sm:text-xs font-light text-white/60 active:text-white/90 transition-colors whitespace-nowrap"
                             >
                               {project.link} →
@@ -428,6 +553,128 @@ export default function Portfolio() {
           </div>
         </div>
       </main>
+
+      {selectedProject && activeProjectImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-3 py-6 backdrop-blur-md sm:px-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="project-modal-title"
+          onClick={() => setSelectedProjectIndex(null)}
+        >
+          <div
+            className="relative isolate flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.06] shadow-2xl shadow-black/35 backdrop-blur-2xl sm:rounded-2xl md:rounded-3xl lg:grid lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.8fr)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.10] via-white/[0.025] to-transparent" />
+            <div className="pointer-events-none absolute left-4 right-4 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent sm:left-8 sm:right-8" />
+
+            <button
+              type="button"
+              onClick={() => setSelectedProjectIndex(null)}
+              className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] text-white/80 shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/[0.14] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              aria-label="Close project details"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="relative min-h-[260px] overflow-hidden border-b border-white/10 bg-black/[0.12] sm:min-h-[360px] lg:min-h-[620px] lg:border-b-0 lg:border-r">
+              <img
+                src={activeProjectImage}
+                alt={`${selectedProject.title} preview ${activeGalleryIndex + 1}`}
+                className="h-full max-h-[58vh] min-h-[260px] w-full object-contain sm:min-h-[360px] lg:max-h-none lg:min-h-[620px]"
+              />
+
+              {selectedProjectImages.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => stepProjectImage(-1)}
+                    className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] text-white/80 shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/[0.14] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                    aria-label="Previous project image"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => stepProjectImage(1)}
+                    className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] text-white/80 shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/[0.14] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                    aria-label="Next project image"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            <div className="relative flex min-h-0 flex-col gap-5 overflow-y-auto bg-white/[0.025] p-5 sm:p-6 lg:p-8">
+              <div className="pr-10">
+                <p className="mb-2 text-[10px] font-light uppercase tracking-[0.24em] text-white/40">
+                  Project
+                </p>
+                <h2 id="project-modal-title" className="text-2xl font-light text-white sm:text-3xl">
+                  {selectedProject.title}
+                </h2>
+              </div>
+
+              <p className="text-sm font-light leading-relaxed text-white/68">
+                {selectedProject.modalDescription ?? selectedProject.description}
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {selectedProject.tech.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-[11px] font-light text-white/70 backdrop-blur-sm"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+
+              {selectedProject.link && (
+                <a
+                  href={`https://${selectedProject.link}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-xs font-light text-white/80 shadow-sm shadow-black/10 backdrop-blur-sm transition hover:bg-white/[0.14] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                >
+                  {selectedProject.link}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              )}
+
+              <div className="mt-auto">
+                {selectedProjectImages.length > 1 && (
+                  <div className="mb-3 flex items-center justify-between text-[11px] font-light text-white/45">
+                    <span>Gallery</span>
+                    <span>
+                      {activeGalleryIndex + 1} / {selectedProjectImages.length}
+                    </span>
+                  </div>
+                )}
+                <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-4">
+                  {selectedProjectImages.map((image, index) => (
+                    <button
+                      key={image}
+                      type="button"
+                      onClick={() => setActiveGalleryIndex(index)}
+                      className={`aspect-video overflow-hidden rounded-lg border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${
+                        index === activeGalleryIndex
+                          ? "border-white/55 bg-white/[0.12]"
+                          : "border-white/10 bg-white/[0.05] opacity-70 hover:bg-white/[0.08] hover:opacity-100"
+                      }`}
+                      aria-label={`Show ${selectedProject.title} image ${index + 1}`}
+                    >
+                      <img src={image} alt="" className="h-full w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

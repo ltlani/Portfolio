@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Figtree } from "next/font/google"
 import { GeistMono } from "geist/font/mono"
 import { Instrument_Serif } from "next/font/google"
@@ -22,6 +22,7 @@ const instrumentSerif = Instrument_Serif({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ouadielaachkar.com"),
   title: "Ouadie | Portfolio",
   description: "16-year-old developer & entrepreneur from Amsterdam. Building innovative systems and digital products. Founder of Verba, an AI character creation platform.",
   generator: "Next.js",
@@ -69,11 +70,12 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
   themeColor: "#8b5cf6",
   colorScheme: "dark",
 }
