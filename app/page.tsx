@@ -101,18 +101,19 @@ const projectsContent: Project[] = [
   {
     title: "Milo",
     description:
-      "Hosted professional email identity concept for people who want a polished email address without setting up domains, DNS, or mail hosting.",
+      "Live professional email identity website for people who want a polished address without setting up domains, DNS, or mail hosting.",
     modalDescription:
-      "Milo is a product concept for professional email identities. The platform would handle the domain, DNS, and email setup so users can quickly reserve addresses like mark@vanderjong.com without touching mail infrastructure themselves.",
+      "Milo is a live professional email identity website. It is built around hiding the domain, DNS, and email setup complexity so users can quickly reserve addresses like mark@vanderjong.com without touching mail infrastructure themselves.",
     tech: ["Next.js", "DNS", "Domains", "Email Infrastructure", "Auth", "Product Design"],
     image: miloImage.src,
     highlights: [
       "Designed around a clear onboarding flow for professionals, job seekers, and LinkedIn users.",
-      "Explores abstracting domain ownership, DNS, inbox setup, and account management behind a simple UI.",
+      "Turns domain ownership, DNS, inbox setup, and account management into a simpler hosted flow.",
       "Focuses on trust, identity, and reducing technical setup for non-technical users.",
     ],
+    link: "milo.host",
     metrics: [
-      { value: "Concept", label: "product stage" },
+      { value: "Live", label: "website" },
       { value: "DNS-free", label: "user setup" },
       { value: "Hosted", label: "email identity" },
     ],
@@ -179,6 +180,7 @@ const homeProjects = projectsContent.map((project) => ({
   tech: project.tech.slice(0, 3),
   image: project.image,
   metrics: project.metrics,
+  link: project.link,
 }))
 
 function getProjectImages(project: Project) {
@@ -457,7 +459,22 @@ export default function Portfolio() {
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-light text-white mb-2">{project.title}</h3>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <h3 className="text-xl font-light text-white">{project.title}</h3>
+                      {project.link && (
+                        <a
+                          href={`https://${project.link}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(event) => event.stopPropagation()}
+                          onKeyDown={(event) => event.stopPropagation()}
+                          className="inline-flex shrink-0 items-center gap-1 rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-1 text-[10px] font-light text-white/60 transition hover:bg-white/[0.11] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                        >
+                          {project.link}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
                     <p className="text-xs font-light text-white/60 mb-4 leading-relaxed">{project.description}</p>
                     {project.metrics && (
                       <div className="grid grid-cols-3 gap-2 mb-4">
