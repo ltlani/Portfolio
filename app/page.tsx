@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight, ExternalLink, X } from "lucide-react"
 import Header from "@/components/header"
+import discordImage from "./discord.png"
+import miloImage from "./milo.png"
 import portfolioImage from "./portfolio.png"
 import verbaDashboardImage from "./verba-dashboard.png"
 import verbaGallery1 from "./verba-gallery1.png"
@@ -15,6 +17,11 @@ import verbaGallery8 from "./verba-gallery8.png"
 
 type Section = "education" | "projects" | "future"
 type View = "home" | "experiences"
+type ProjectMetric = {
+  value: string
+  label: string
+}
+
 type Project = {
   title: string
   description: string
@@ -22,7 +29,15 @@ type Project = {
   tech: string[]
   image: string
   gallery?: string[]
+  highlights?: string[]
   link?: string
+  metrics?: ProjectMetric[]
+}
+
+const sectionLabels: Record<Section, string> = {
+  education: "Experience",
+  projects: "Projects",
+  future: "Direction",
 }
 
 const verbaGalleryImages = [
@@ -38,11 +53,25 @@ const verbaGalleryImages = [
 
 const educationContent = [
   {
-    title: "VWO 4 (Pre-university education)",
+    title: "Full-stack founder / product builder",
+    institution: "Verba",
+    period: "Current",
+    description:
+      "Building and operating a live character platform mostly solo across dashboards, backend services, integrations, infrastructure, security, community, and monetization.",
+  },
+  {
+    title: "VWO 4 student",
     institution: "Het Amsterdams Lyceum",
     period: "Current",
     description:
-      "Studying at one of Amsterdam's leading secondary schools while building products and learning software development",
+      "Following pre-university education in Amsterdam while shipping production software outside school and learning deeper systems, infrastructure, and machine learning fundamentals.",
+  },
+  {
+    title: "Discord bot operator",
+    institution: "Independent project",
+    period: "Age 14",
+    description:
+      "Built a Discord bot that reached around 7,000 servers and generated about $220/month, learning how to run, support, and monetize a real product early.",
   },
 ]
 
@@ -50,53 +79,106 @@ const projectsContent: Project[] = [
   {
     title: "Verba",
     description:
-      "AI character creation platform that lets users design and connect conversational AIs to Discord, Twitter/X, Bluesky, and soon WhatsApp. Handling everything from backend infrastructure to UI design and deployment.",
+      "Character creation platform with accounts, billing, dashboards, custom commands, bot personalities, and social integrations for Discord, WhatsApp, and Telegram.",
     modalDescription:
-      "Verba is an AI character creation platform for designing conversational agents and connecting them to social and messaging platforms from one dashboard.",
-    tech: ["Node.js", "AI/LLM Integration", "Discord API", "Twitter API", "Docker", "And More.."],
+      "I built and operate Verba mostly solo: frontend dashboards, backend systems, MongoDB and Redis data layers, Discord/WhatsApp/Telegram integrations, billing-related flows, Docker deployments, server management, and security hardening.",
+    tech: ["Node.js", "MongoDB", "Redis", "Docker", "Discord API", "WhatsApp", "Telegram", "Billing"],
     image: verbaDashboardImage.src,
     gallery: verbaGalleryImages,
+    highlights: [
+      "Around 11,000 registered users, 8,000 bots, and 10,000 characters created.",
+      "Built dashboards, user accounts, custom commands, personality controls, explore pages, and community features.",
+      "Managed Linux/VPS infrastructure, Nginx, DNS, Cloudflare, SSL, firewalls, and anti-DDoS work.",
+      "Handled community feedback, product direction, updates, and monetization.",
+    ],
     link: "verba.ink",
+    metrics: [
+      { value: "11k", label: "registered users" },
+      { value: "8k", label: "bots created" },
+      { value: "10k", label: "characters" },
+    ],
+  },
+  {
+    title: "Milo",
+    description:
+      "Hosted professional email identity concept for people who want a polished email address without setting up domains, DNS, or mail hosting.",
+    modalDescription:
+      "Milo is a product concept for professional email identities. The platform would handle the domain, DNS, and email setup so users can quickly reserve addresses like mark@vanderjong.com without touching mail infrastructure themselves.",
+    tech: ["Next.js", "DNS", "Domains", "Email Infrastructure", "Auth", "Product Design"],
+    image: miloImage.src,
+    highlights: [
+      "Designed around a clear onboarding flow for professionals, job seekers, and LinkedIn users.",
+      "Explores abstracting domain ownership, DNS, inbox setup, and account management behind a simple UI.",
+      "Focuses on trust, identity, and reducing technical setup for non-technical users.",
+    ],
+    metrics: [
+      { value: "Concept", label: "product stage" },
+      { value: "DNS-free", label: "user setup" },
+      { value: "Hosted", label: "email identity" },
+    ],
+  },
+  {
+    title: "Discord Bot",
+    description:
+      "Previous Discord bot project built at 14 that grew to around 7,000 servers and generated roughly $220/month.",
+    modalDescription:
+      "This was my first serious production project: a Discord bot used across thousands of communities. It taught me API limits, uptime, user support, monetization, and the difference between a side project and a service people rely on.",
+    tech: ["Node.js", "Discord API", "MongoDB", "Automation", "Payments"],
+    image: discordImage.src,
+    highlights: [
+      "Reached around 7,000 Discord servers.",
+      "Generated about $220/month while I was 14.",
+      "Gave me early experience with support, reliability, API integrations, and product iteration.",
+    ],
+    metrics: [
+      { value: "7k", label: "servers" },
+      { value: "$220/mo", label: "revenue" },
+      { value: "14", label: "age built" },
+    ],
   },
   {
     title: "Portfolio Website",
     description:
-      "Fully AI-assisted and customized portfolio website showcasing projects, skills, and personal growth as a young developer exploring AI and product design.",
+      "Custom portfolio site built with Next.js, React, Tailwind, shader backgrounds, responsive layouts, and project modals.",
     modalDescription:
-      "A customized portfolio built to present projects, technical interests, and personal growth in one visual web experience.",
+      "A custom portfolio interface for presenting real projects, product traction, and technical range. It uses a glass-style UI, responsive project cards, image galleries, and a shader-driven background.",
     tech: ["React", "Next.js", "Tailwind CSS", "WebGL"],
     image: portfolioImage.src,
+    highlights: [
+      "Built as a responsive portfolio rather than a template landing page.",
+      "Includes project modals, local image galleries, and a persistent glass UI system.",
+      "Optimized around showing real product work and technical breadth.",
+    ],
   },
 ]
 
 const futureContent = [
   {
-    title: "Build Innovative AI Systems",
-    description: "Creating AI systems that make technology more natural, accessible, and creative for everyone",
-    status: "In Progress",
+    title: "Join a strong engineering or product team",
+    description:
+      "I want to work with people who care about shipping reliable software, learning fast, and building products that real users depend on.",
+    status: "Goal",
   },
   {
-    title: "Grow Verba into a Global Platform",
+    title: "Scale products with stronger infrastructure",
     description:
-      "Expanding Verba's reach and capabilities to become a leading AI character creation platform worldwide",
-    status: "Active",
+      "I am focused on backend reliability, observability, security, billing systems, automation, and making small products more production-ready.",
+    status: "Now",
   },
   {
-    title: "Found or Join AI-Focused Tech Company",
+    title: "Deepen systems and machine learning fundamentals",
     description:
-      "Leading projects that push the limits of what AI can do, focusing on machine learning, software architecture, and business development",
-    status: "Long-term Goal",
+      "Machine learning interests me, but I want the foundation first: clean software architecture, data systems, APIs, infrastructure, and practical deployment.",
+    status: "Learning",
   },
 ]
 
 const homeProjects = projectsContent.map((project) => ({
   title: project.title,
-  description:
-    project.title === "Verba"
-      ? "AI character creation platform with Discord, Twitter/X, and Bluesky integration"
-      : "Fully AI-assisted portfolio showcasing projects and skills",
+  description: project.description,
   tech: project.tech.slice(0, 3),
   image: project.image,
+  metrics: project.metrics,
 }))
 
 function getProjectImages(project: Project) {
@@ -219,19 +301,23 @@ export default function Portfolio() {
             >
               <div className="absolute top-0 left-1 right-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full" />
               <span className="text-white/90 text-[10px] md:text-xs font-light relative z-10">
-                16-year-old developer from Amsterdam
+                16-year-old full-stack builder from Amsterdam
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl tracking-tight font-light text-white mb-4 md:mb-6 px-2">
-              <span className="font-medium italic instrument"></span> Developer
+            <h1
+              aria-label="Full-stack Developer and Product Builder"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl tracking-tight font-light text-white mb-4 md:mb-6 px-2"
+            >
+              <span className="font-medium italic instrument"></span> Full-stack Developer
               <br />
-              <span className="font-light tracking-tight text-white">& Entrepreneur</span>
+              <span className="font-light tracking-tight text-white">& Product Builder</span>
             </h1>
 
             <p className="text-xs md:text-sm font-light text-white/70 mb-6 md:mb-8 leading-relaxed max-w-2xl mx-auto px-4">
-              Building innovative AI systems and digital products. Founder of Verba, an AI character creation platform.
-              Passionate about merging creativity with technology through web apps, automation, and conversational AI.
+              I build web products end to end: frontend dashboards, backend APIs, integrations, billing flows,
+              infrastructure, and automation. My main project, Verba, has around 11,000 registered users,
+              8,000 bots created, and 10,000 characters created.
             </p>
 
             <div className="flex items-center justify-center gap-2 mb-6 md:mb-8 flex-wrap px-4">
@@ -251,22 +337,34 @@ export default function Portfolio() {
                 Node.js
               </span>
               <span className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-white/5 backdrop-blur-sm text-white/80 text-[10px] md:text-xs font-light border border-white/10">
-                AI/LLM
+                MongoDB
+              </span>
+              <span className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-white/5 backdrop-blur-sm text-white/80 text-[10px] md:text-xs font-light border border-white/10">
+                Redis
+              </span>
+              <span className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-white/5 backdrop-blur-sm text-white/80 text-[10px] md:text-xs font-light border border-white/10">
+                Docker
+              </span>
+              <span className="px-3 md:px-4 py-1.5 md:py-2 rounded-full bg-white/5 backdrop-blur-sm text-white/80 text-[10px] md:text-xs font-light border border-white/10">
+                Linux
               </span>
             </div>
 
             <div className="flex items-center justify-center gap-3 md:gap-4 flex-wrap px-4">
               <button
-                onClick={() => setCurrentView("experiences")}
-                className="px-6 md:px-8 py-2.5 md:py-3 rounded-full bg-transparent border border-white/30 text-white font-normal text-xs transition-all duration-200 hover:bg-white/10 hover:border-white/50 cursor-pointer inline-block"
+                onClick={() => {
+                  setActiveSection("projects")
+                  setCurrentView("experiences")
+                }}
+                className="px-6 md:px-8 py-2.5 md:py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90 cursor-pointer inline-block"
               >
-                Experiences
+                View Projects
               </button>
               <a
                 href="https://www.linkedin.com/in/ouadielaachkar/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 md:px-8 py-2.5 md:py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90 cursor-pointer inline-block"
+                className="px-6 md:px-8 py-2.5 md:py-3 rounded-full bg-transparent border border-white/30 text-white font-normal text-xs transition-all duration-200 hover:bg-white/10 hover:border-white/50 cursor-pointer inline-block"
               >
                 Get in Touch
               </a>
@@ -274,16 +372,16 @@ export default function Portfolio() {
 
             <div className="grid grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-16 max-w-2xl mx-auto px-4">
               <div className="text-center">
-                <div className="text-2xl md:text-3xl font-light text-white mb-1 md:mb-2">2+</div>
-                <div className="text-[10px] md:text-xs font-light text-white/60">Active Projects</div>
+                <div className="text-2xl md:text-3xl font-light text-white mb-1 md:mb-2">11k</div>
+                <div className="text-[10px] md:text-xs font-light text-white/60">Verba Users</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl md:text-3xl font-light text-white mb-1 md:mb-2">16</div>
-                <div className="text-[10px] md:text-xs font-light text-white/60">Years Old</div>
+                <div className="text-2xl md:text-3xl font-light text-white mb-1 md:mb-2">8k</div>
+                <div className="text-[10px] md:text-xs font-light text-white/60">Bots Created</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl md:text-3xl font-light text-white mb-1 md:mb-2">VWO 4</div>
-                <div className="text-[10px] md:text-xs font-light text-white/60">Student</div>
+                <div className="text-2xl md:text-3xl font-light text-white mb-1 md:mb-2">7k</div>
+                <div className="text-[10px] md:text-xs font-light text-white/60">Discord Servers</div>
               </div>
             </div>
           </div>
@@ -297,7 +395,7 @@ export default function Portfolio() {
                 onClick={() => setShowProjects(false)}
                 className="px-4 md:px-6 py-2 rounded-full bg-white/5 backdrop-blur-sm border border-white/20 text-white/80 text-xs font-light transition-all duration-200 hover:bg-white/10 hover:border-white/30 cursor-pointer"
               >
-                ← Back
+                Back
               </button>
             </div>
 
@@ -330,6 +428,19 @@ export default function Portfolio() {
                   <div className="p-6">
                     <h3 className="text-xl font-light text-white mb-2">{project.title}</h3>
                     <p className="text-xs font-light text-white/60 mb-4 leading-relaxed">{project.description}</p>
+                    {project.metrics && (
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        {project.metrics.map((metric) => (
+                          <div
+                            key={`${project.title}-${metric.label}`}
+                            className="rounded-lg border border-white/10 bg-white/[0.04] px-2 py-2 text-center"
+                          >
+                            <div className="text-sm font-light text-white">{metric.value}</div>
+                            <div className="text-[9px] font-light text-white/45 leading-tight">{metric.label}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <div className="flex flex-wrap gap-2">
                       {project.tech.map((tech, i) => (
                         <span
@@ -361,7 +472,7 @@ export default function Portfolio() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="w-full px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 text-white font-light text-xs sm:text-sm flex items-center justify-between transition-all duration-200 active:bg-white/10"
             >
-              <span className="truncate">{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</span>
+              <span className="truncate">{sectionLabels[activeSection]}</span>
               <svg
                 className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ml-2 transition-transform duration-300 ${mobileMenuOpen ? "rotate-180" : ""}`}
                 fill="none"
@@ -381,7 +492,7 @@ export default function Portfolio() {
             <div className="lg:sticky lg:top-24 rounded-xl sm:rounded-2xl md:rounded-3xl bg-white/5 backdrop-blur-md border border-white/10 p-3 sm:p-4 md:p-6">
               <div className="absolute top-0 left-3 sm:left-4 right-3 sm:right-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full" />
 
-              <h2 className="text-lg sm:text-xl md:text-2xl font-light text-white mb-3 sm:mb-4 md:mb-6">Experiences</h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-light text-white mb-3 sm:mb-4 md:mb-6">Profile</h2>
 
               <nav className="space-y-1.5 sm:space-y-2">
                 <button
@@ -395,7 +506,7 @@ export default function Portfolio() {
                       : "text-white/60 active:text-white/80 active:bg-white/5"
                   }`}
                 >
-                  Education
+                  Experience
                 </button>
                 <button
                   onClick={() => {
@@ -421,7 +532,7 @@ export default function Portfolio() {
                       : "text-white/60 active:text-white/80 active:bg-white/5"
                   }`}
                 >
-                  Future
+                  Direction
                 </button>
               </nav>
 
@@ -439,7 +550,7 @@ export default function Portfolio() {
             {/* Education Section */}
             {activeSection === "education" && (
               <div className="animate-in fade-in duration-500">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 sm:mb-6 md:mb-8">Education</h1>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 sm:mb-6 md:mb-8">Experience</h1>
                 <div className="space-y-3 sm:space-y-4 md:space-y-6">
                   {educationContent.map((item, index) => (
                     <div
@@ -502,13 +613,28 @@ export default function Portfolio() {
                               onKeyDown={(event) => event.stopPropagation()}
                               className="text-[10px] sm:text-xs font-light text-white/60 active:text-white/90 transition-colors whitespace-nowrap"
                             >
-                              {project.link} →
+                              {project.link}
                             </a>
                           )}
                         </div>
                         <p className="text-xs sm:text-sm md:text-sm font-light text-white/60 mb-3 sm:mb-4 leading-relaxed break-words">
                           {project.description}
                         </p>
+                        {project.metrics && (
+                          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+                            {project.metrics.map((metric) => (
+                              <div
+                                key={`${project.title}-${metric.label}`}
+                                className="rounded-lg border border-white/10 bg-white/[0.04] px-2 py-2 text-center"
+                              >
+                                <div className="text-xs sm:text-sm font-light text-white">{metric.value}</div>
+                                <div className="text-[8px] sm:text-[9px] font-light text-white/45 leading-tight">
+                                  {metric.label}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         <div className="flex flex-wrap gap-1.5 sm:gap-2">
                           {project.tech.map((tech, i) => (
                             <span
@@ -530,7 +656,7 @@ export default function Portfolio() {
             {/* Future Section */}
             {activeSection === "future" && (
               <div className="animate-in fade-in duration-500">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 sm:mb-6 md:mb-8 lg:mt-0">Future</h1>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 sm:mb-6 md:mb-8 lg:mt-0">Direction</h1>
                 <div className="space-y-3 sm:space-y-4 md:space-y-6">
                   {futureContent.map((item, index) => (
                   <div
@@ -621,6 +747,20 @@ export default function Portfolio() {
                 {selectedProject.modalDescription ?? selectedProject.description}
               </p>
 
+              {selectedProject.metrics && (
+                <div className="grid grid-cols-3 gap-2">
+                  {selectedProject.metrics.map((metric) => (
+                    <div
+                      key={`${selectedProject.title}-${metric.label}`}
+                      className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-center backdrop-blur-sm"
+                    >
+                      <div className="text-lg font-light text-white">{metric.value}</div>
+                      <div className="text-[10px] font-light text-white/45 leading-tight">{metric.label}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2">
                 {selectedProject.tech.map((tech) => (
                   <span
@@ -631,6 +771,21 @@ export default function Portfolio() {
                   </span>
                 ))}
               </div>
+
+              {selectedProject.highlights && (
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm">
+                  <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-white/40">
+                    What I handled
+                  </p>
+                  <ul className="list-disc space-y-2 pl-4">
+                    {selectedProject.highlights.map((highlight) => (
+                      <li key={highlight} className="text-xs font-light leading-relaxed text-white/62">
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {selectedProject.link && (
                 <a

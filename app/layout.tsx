@@ -23,14 +23,24 @@ const instrumentSerif = Instrument_Serif({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ouadielaachkar.com"),
-  title: "Ouadie | Portfolio",
-  description: "16-year-old developer & entrepreneur from Amsterdam. Building innovative systems and digital products. Founder of Verba, an AI character creation platform.",
+  title: "Ouadie | Full-stack Developer",
+  description:
+    "16-year-old full-stack developer from Amsterdam building production web apps, developer tools, infrastructure, and products with real users.",
   generator: "Next.js",
   applicationName: "Ouadie Portfolio",
   authors: [{ name: "Ouadie Laachkar" }],
   creator: "Ouadie Laachkar",
   publisher: "Ouadie Laachkar",
-  keywords: ["developer", "portfolio", "AI", "Verba", "Amsterdam", "entrepreneur", "software engineer"],
+  keywords: [
+    "full-stack developer",
+    "portfolio",
+    "Verba",
+    "Amsterdam",
+    "software engineer",
+    "Node.js",
+    "Next.js",
+    "infrastructure",
+  ],
   icons: {
     icon: '/favicon.svg',
     apple: '/favicon.svg',
@@ -40,22 +50,24 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://ouadielaachkar.com",
     siteName: "Ouadie | Portfolio",
-    title: "Ouadie | Developer & Entrepreneur",
-    description: "16-year-old developer & entrepreneur from Amsterdam. Building innovative AI systems and digital products. Founder of Verba, an AI character creation platform.",
+    title: "Ouadie | Full-stack Developer",
+    description:
+      "16-year-old full-stack developer from Amsterdam building production web apps, infrastructure, automation, and products with real users.",
     images: [
       {
         url: "/favicon.svg",
         width: 400,
         height: 400,
-        alt: "Ouadie - Developer & Entrepreneur Portfolio",
+    alt: "Ouadie - Full-stack Developer Portfolio",
         type: "image/svg+xml",
       },
     ],
   },
   twitter: {
     card: "summary",
-    title: "Ouadie | Developer & Entrepreneur",
-    description: "16-year-old developer & entrepreneur from Amsterdam. Building innovative AI systems and digital products. Founder of Verba.",
+    title: "Ouadie | Full-stack Developer",
+    description:
+      "16-year-old full-stack developer from Amsterdam building web apps, infrastructure, automation, and products with real users.",
     images: ["/favicon.svg"],
     creator: "@ouadielaachkar",
   },
