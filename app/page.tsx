@@ -185,6 +185,8 @@ function getProjectImages(project: Project) {
   return project.gallery?.length ? project.gallery : [project.image]
 }
 
+const PROJECT_MODAL_ANIMATION_MS = 500
+
 export default function Portfolio() {
   const [currentView, setCurrentView] = useState<View>("home")
   const [activeSection, setActiveSection] = useState<Section>("education")
@@ -192,7 +194,9 @@ export default function Portfolio() {
   const [showProjects, setShowProjects] = useState(false)
   const [selectedProjectIndex, setSelectedProjectIndex] = useState<number | null>(null)
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0)
+  const [isProjectModalClosing, setIsProjectModalClosing] = useState(false)
   const experiencesScrollRef = useRef<HTMLElement | null>(null)
+  const projectModalCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Reset scroll position and disable/enable body scroll when switching views
   useEffect(() => {
@@ -234,7 +238,7 @@ export default function Portfolio() {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setSelectedProjectIndex(null)
+        closeProjectModal()
         return
       }
 
@@ -262,9 +266,36 @@ export default function Portfolio() {
     }
   }, [selectedProject, selectedProjectImages.length])
 
+  useEffect(() => {
+    return () => {
+      if (projectModalCloseTimerRef.current) {
+        clearTimeout(projectModalCloseTimerRef.current)
+      }
+    }
+  }, [])
+
   const openProjectModal = (index: number) => {
+    if (projectModalCloseTimerRef.current) {
+      clearTimeout(projectModalCloseTimerRef.current)
+    }
+
     setSelectedProjectIndex(index)
     setActiveGalleryIndex(0)
+    setIsProjectModalClosing(false)
+  }
+
+  const closeProjectModal = () => {
+    if (selectedProjectIndex === null || isProjectModalClosing) {
+      return
+    }
+
+    setIsProjectModalClosing(true)
+    projectModalCloseTimerRef.current = setTimeout(() => {
+      setSelectedProjectIndex(null)
+      setActiveGalleryIndex(0)
+      setIsProjectModalClosing(false)
+      projectModalCloseTimerRef.current = null
+    }, PROJECT_MODAL_ANIMATION_MS)
   }
 
   const stepProjectImage = (direction: 1 | -1) => {
@@ -307,11 +338,11 @@ export default function Portfolio() {
 
             <h1
               aria-label="Full-stack Developer and Product Builder"
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl tracking-tight font-light text-white mb-4 md:mb-6 px-2"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-light text-white mb-4 md:mb-6 px-2"
             >
-              <span className="font-medium italic instrument"></span> Full-stack Developer
+              Full-stack Developer
               <br />
-              <span className="font-light tracking-tight text-white">& Product Builder</span>
+              <span className="font-light text-white">& Product Builder</span>
             </h1>
 
             <p className="text-xs md:text-sm font-light text-white/70 mb-6 md:mb-8 leading-relaxed max-w-2xl mx-auto px-4">
@@ -500,10 +531,10 @@ export default function Portfolio() {
                     setActiveSection("education")
                     setMobileMenuOpen(false)
                   }}
-                  className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all duration-200 active:scale-[0.98] ${
+                  className={`w-full border text-left px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all duration-150 outline-none focus:outline-none focus-visible:ring-0 active:scale-[0.98] ${
                     activeSection === "education"
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "text-white/60 active:text-white/80 active:bg-white/5"
+                      ? "border-white/[0.18] bg-white/[0.08] text-white"
+                      : "border-transparent text-white/60 hover:bg-white/[0.04] active:text-white/80 active:bg-white/5"
                   }`}
                 >
                   Experience
@@ -513,10 +544,10 @@ export default function Portfolio() {
                     setActiveSection("projects")
                     setMobileMenuOpen(false)
                   }}
-                  className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all duration-200 active:scale-[0.98] ${
+                  className={`w-full border text-left px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all duration-150 outline-none focus:outline-none focus-visible:ring-0 active:scale-[0.98] ${
                     activeSection === "projects"
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "text-white/60 active:text-white/80 active:bg-white/5"
+                      ? "border-white/[0.18] bg-white/[0.08] text-white"
+                      : "border-transparent text-white/60 hover:bg-white/[0.04] active:text-white/80 active:bg-white/5"
                   }`}
                 >
                   Projects
@@ -526,10 +557,10 @@ export default function Portfolio() {
                     setActiveSection("future")
                     setMobileMenuOpen(false)
                   }}
-                  className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all duration-200 active:scale-[0.98] ${
+                  className={`w-full border text-left px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-light transition-all duration-150 outline-none focus:outline-none focus-visible:ring-0 active:scale-[0.98] ${
                     activeSection === "future"
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "text-white/60 active:text-white/80 active:bg-white/5"
+                      ? "border-white/[0.18] bg-white/[0.08] text-white"
+                      : "border-transparent text-white/60 hover:bg-white/[0.04] active:text-white/80 active:bg-white/5"
                   }`}
                 >
                   Direction
@@ -682,63 +713,98 @@ export default function Portfolio() {
 
       {selectedProject && activeProjectImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-3 py-6 backdrop-blur-md sm:px-6"
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-black/25 px-3 py-4 backdrop-blur-md sm:px-5 ${
+            isProjectModalClosing ? "pointer-events-none" : ""
+          }`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="project-modal-title"
-          onClick={() => setSelectedProjectIndex(null)}
+          onClick={closeProjectModal}
+          style={{
+            animation: `${isProjectModalClosing ? "modalOverlayOut" : "modalOverlayIn"} ${PROJECT_MODAL_ANIMATION_MS}ms ease forwards`,
+          }}
         >
           <div
-            className="relative isolate flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.06] shadow-2xl shadow-black/35 backdrop-blur-2xl sm:rounded-2xl md:rounded-3xl lg:grid lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.8fr)]"
+            className="relative isolate grid max-h-[94vh] w-full max-w-7xl grid-rows-[minmax(0,1fr)_auto] overflow-hidden rounded-xl border border-white/15 bg-white/[0.055] shadow-2xl shadow-black/35 backdrop-blur-[34px] sm:rounded-2xl md:rounded-3xl lg:grid-cols-[minmax(0,1.75fr)_minmax(340px,0.72fr)] lg:grid-rows-1"
             onClick={(event) => event.stopPropagation()}
+            style={{
+              animation: `${isProjectModalClosing ? "modalPanelOut" : "modalPanelIn"} ${PROJECT_MODAL_ANIMATION_MS}ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards`,
+            }}
           >
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.10] via-white/[0.025] to-transparent" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.11] via-white/[0.035] to-white/[0.015]" />
             <div className="pointer-events-none absolute left-4 right-4 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent sm:left-8 sm:right-8" />
 
             <button
               type="button"
-              onClick={() => setSelectedProjectIndex(null)}
-              className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] text-white/80 shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/[0.14] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              onClick={closeProjectModal}
+              className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.10] text-white/80 shadow-lg shadow-black/20 backdrop-blur-xl transition hover:bg-white/[0.17] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
               aria-label="Close project details"
             >
               <X className="h-4 w-4" />
             </button>
 
-            <div className="relative min-h-[260px] overflow-hidden border-b border-white/10 bg-black/[0.12] sm:min-h-[360px] lg:min-h-[620px] lg:border-b-0 lg:border-r">
-              <img
-                src={activeProjectImage}
-                alt={`${selectedProject.title} preview ${activeGalleryIndex + 1}`}
-                className="h-full max-h-[58vh] min-h-[260px] w-full object-contain sm:min-h-[360px] lg:max-h-none lg:min-h-[620px]"
-              />
+            <div className="relative flex min-h-0 flex-col border-b border-white/10 bg-white/[0.025] p-3 sm:p-4 lg:border-b-0 lg:border-r">
+              <div className="relative flex min-h-[260px] flex-1 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.045] p-2 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:min-h-[360px] lg:min-h-0">
+                <img
+                  src={activeProjectImage}
+                  alt={`${selectedProject.title} preview ${activeGalleryIndex + 1}`}
+                  className="h-full max-h-full w-full rounded-lg object-contain"
+                />
+
+                {selectedProjectImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => stepProjectImage(-1)}
+                      className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.11] text-white/85 shadow-lg shadow-black/20 backdrop-blur-xl transition hover:bg-white/[0.18] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                      aria-label="Previous project image"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => stepProjectImage(1)}
+                      className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.11] text-white/85 shadow-lg shadow-black/20 backdrop-blur-xl transition hover:bg-white/[0.18] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                      aria-label="Next project image"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                    <div className="absolute bottom-3 right-3 rounded-full border border-white/10 bg-white/[0.10] px-3 py-1 text-[11px] font-light text-white/70 backdrop-blur-xl">
+                      {activeGalleryIndex + 1} / {selectedProjectImages.length}
+                    </div>
+                  </>
+                )}
+              </div>
 
               {selectedProjectImages.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => stepProjectImage(-1)}
-                    className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] text-white/80 shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/[0.14] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-                    aria-label="Previous project image"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => stepProjectImage(1)}
-                    className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] text-white/80 shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/[0.14] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-                    aria-label="Next project image"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </>
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-2 backdrop-blur-xl">
+                  <div className="flex gap-2 overflow-x-auto">
+                    {selectedProjectImages.map((image, index) => (
+                      <button
+                        key={image}
+                        type="button"
+                        onClick={() => setActiveGalleryIndex(index)}
+                        className={`h-16 w-28 flex-shrink-0 overflow-hidden rounded-lg border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 sm:h-20 sm:w-36 ${
+                          index === activeGalleryIndex
+                            ? "border-white/60 bg-white/[0.14] opacity-100"
+                            : "border-white/10 bg-white/[0.06] opacity-75 hover:bg-white/[0.10] hover:opacity-100"
+                        }`}
+                        aria-label={`Show ${selectedProject.title} image ${index + 1}`}
+                      >
+                        <img src={image} alt="" className="h-full w-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
 
-            <div className="relative flex min-h-0 flex-col gap-5 overflow-y-auto bg-white/[0.025] p-5 sm:p-6 lg:p-8">
+            <div className="relative flex min-h-0 flex-col gap-5 overflow-y-auto bg-white/[0.035] p-5 sm:p-6 lg:max-h-[94vh] lg:p-7">
               <div className="pr-10">
-                <p className="mb-2 text-[10px] font-light uppercase tracking-[0.24em] text-white/40">
+                <p className="mb-2 font-mono text-[10px] font-normal uppercase text-white/42">
                   Project
                 </p>
-                <h2 id="project-modal-title" className="text-2xl font-light text-white sm:text-3xl">
+                <h2 id="project-modal-title" className="text-2xl font-normal text-white sm:text-3xl">
                   {selectedProject.title}
                 </h2>
               </div>
@@ -754,8 +820,8 @@ export default function Portfolio() {
                       key={`${selectedProject.title}-${metric.label}`}
                       className="rounded-xl border border-white/10 bg-white/[0.05] px-3 py-3 text-center backdrop-blur-sm"
                     >
-                      <div className="text-lg font-light text-white">{metric.value}</div>
-                      <div className="text-[10px] font-light text-white/45 leading-tight">{metric.label}</div>
+                      <div className="font-mono text-base font-normal text-white">{metric.value}</div>
+                      <div className="text-[10px] font-light leading-tight text-white/45">{metric.label}</div>
                     </div>
                   ))}
                 </div>
@@ -774,7 +840,7 @@ export default function Portfolio() {
 
               {selectedProject.highlights && (
                 <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm">
-                  <p className="mb-3 text-[10px] font-light uppercase tracking-[0.22em] text-white/40">
+                  <p className="mb-3 font-mono text-[10px] font-normal uppercase text-white/42">
                     What I handled
                   </p>
                   <ul className="list-disc space-y-2 pl-4">
@@ -799,33 +865,6 @@ export default function Portfolio() {
                 </a>
               )}
 
-              <div className="mt-auto">
-                {selectedProjectImages.length > 1 && (
-                  <div className="mb-3 flex items-center justify-between text-[11px] font-light text-white/45">
-                    <span>Gallery</span>
-                    <span>
-                      {activeGalleryIndex + 1} / {selectedProjectImages.length}
-                    </span>
-                  </div>
-                )}
-                <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-4">
-                  {selectedProjectImages.map((image, index) => (
-                    <button
-                      key={image}
-                      type="button"
-                      onClick={() => setActiveGalleryIndex(index)}
-                      className={`aspect-video overflow-hidden rounded-lg border transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${
-                        index === activeGalleryIndex
-                          ? "border-white/55 bg-white/[0.12]"
-                          : "border-white/10 bg-white/[0.05] opacity-70 hover:bg-white/[0.08] hover:opacity-100"
-                      }`}
-                      aria-label={`Show ${selectedProject.title} image ${index + 1}`}
-                    >
-                      <img src={image} alt="" className="h-full w-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
